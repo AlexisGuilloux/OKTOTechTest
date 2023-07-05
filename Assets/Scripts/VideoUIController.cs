@@ -46,15 +46,62 @@ public class VideoUIController : MonoBehaviour
     private readonly string _albumImageRef = "AlbumCover";
 
     #endregion
-    
+
+    public UIDocument UIDocument => _uiDocument;
     public bool DataInitialized { get; private set; }
+    private bool enabled = false;
 
     private void OnEnable()
     {
-        //UIDocument have a weird behaviour where you can set things only OnEnable
+        //UIDocument have a weird behaviour where you can't set things in Awake and Start
         //What a unfriendly tool that is
-        VisualElement rootVE = _uiDocument.rootVisualElement;
+        QueryAllElements();
+
+        if(_songData == null)return;
         
+        _playerNameText.text = "Player 01";
+        _danceMoveText.text = _songData._danceMove;
+        _artistNameText.text = _songData._artistName;
+        _songNameText.text = _songData._titleName;
+        DataInitialized = true;
+        enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        _playerNameText.text = "";
+        _danceMoveText.text = "";
+        _artistNameText.text = "";
+        _songNameText.text = "";
+        DataInitialized = false;
+        enabled = false;
+    }
+
+    private void OnDestroy()
+    {
+        _likedButton.clicked -= OnLikeButtonPressed;
+        _shareButton.clicked -= OnShareButtonPressed;
+    }
+
+    public void Init(SongData songData)
+    {
+        _songData = songData;
+        gameObject.SetActive(true);
+        if (!enabled)
+        {
+            OnEnable();
+        }
+    }
+
+    public void Flush()
+    {
+        gameObject.SetActive(false);
+    }
+
+
+    private void QueryAllElements()
+    {
+        VisualElement rootVE = _uiDocument.rootVisualElement;
         _likedButton = rootVE.Q<Button>(name: _likedButtonRef);
         _likedButton.clicked += OnLikeButtonPressed;
         
@@ -68,54 +115,7 @@ public class VideoUIController : MonoBehaviour
         _danceMoveText = rootVE.Q<Label>(name: _danceMoveRef);
         _artistNameText = rootVE.Q<Label>(name: _artistNameRef);
         _songNameText = rootVE.Q<Label>(name: _songNameRef);
-        _playerNameText.text = "Player 01";
-        _danceMoveText.text = _songData._danceMove;
-        _artistNameText.text = _songData._artistName;
-        _songNameText.text = _songData._titleName;
-        DataInitialized = true;
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            _songNameText.text = "blablabla";
-        }
-        
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            _songNameText.text = "suisuisui";
-        }
-    }
-
-    private void OnDisable()
-    {
-        _playerNameText.text = "";
-        _danceMoveText.text = "";
-        _artistNameText.text = "";
-        _songNameText.text = "";
-        DataInitialized = false;
-    }
-
-    private void OnDestroy()
-    {
-        _likedButton.clicked -= OnLikeButtonPressed;
-        _shareButton.clicked -= OnShareButtonPressed;
-    }
-
-    public void Init(SongData songData)
-    {
-        _songData = songData;
-        gameObject.SetActive(true);
-        
-    }
-
-    public void Flush()
-    {
-        gameObject.SetActive(false);
-        
-    }
-    
     
     private void OnLikeButtonPressed()
     {

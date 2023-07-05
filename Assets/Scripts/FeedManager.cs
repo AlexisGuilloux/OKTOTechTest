@@ -10,7 +10,7 @@ public class FeedManager : MonoBehaviour
 
     [SerializeField] private VideoUIController _videoUIPrefab;
     [SerializeField] private int _poolNumber = 1;
-    private List<VideoUIController> _videoUIPool;
+    public List<VideoUIController> _videoUIPool;
 
     // Start is called before the first frame update
     void Start()

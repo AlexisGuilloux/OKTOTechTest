@@ -6,36 +6,71 @@ using UnityEngine.UIElements;
 
 public class SwipeManager : MonoBehaviour
 {
-    private Vector2 _startPos;
-    private VisualElement _targetElement;
+    [SerializeField] private FeedManager _feedManager;
     
-    // Start is called before the first frame update
-    void Start()
+    private Vector2 swipeStartPos;
+    private VisualElement contentParent;
+    private int currentIndex = 0;
+    
+    private VideoUIController ActiveVideo => _feedManager._videoUIPool.Find(x => x.DataInitialized);
+    
+    private void Start()
     {
-        
+        contentParent = ActiveVideo.UIDocument.rootVisualElement.Q("MainVideoUI");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _startPos = Input.mousePosition;
+            MouseDown();
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            MousePressed();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            Vector2 endPos = Input.mousePosition;
-            HandleSwipe(endPos);
+            MouseUp();
         }
     }
 
-    private void HandleSwipe(Vector2 endPos)
+    void MouseDown()
     {
-        Vector2 swipeDirection = endPos - _startPos;
+        swipeStartPos = Input.mousePosition;
+    }
 
-        if (!(swipeDirection.magnitude > 50)) return;
+    private void MousePressed()
+    {
+        if (currentIndex != _feedManager._videoUIPool.IndexOf(ActiveVideo)) return;
         
-        SwipeEvents.OnSwipeDetected?.Invoke(swipeDirection.y);
+        Vector2 swipeEndPos = Input.mousePosition;
+        Vector2 swipeDirection = swipeStartPos - swipeEndPos;
+        contentParent.transform.position = new Vector3(contentParent.transform.position.x, swipeDirection.y, contentParent.transform.position.z);
+    }
+    
+    void MouseUp()
+    {
+        Vector2 swipeEndPos = Input.mousePosition;
+        Vector2 swipeDirection = swipeEndPos - swipeStartPos;
+
+        if (Mathf.Abs(swipeDirection.y) > Mathf.Abs(swipeDirection.x))
+        {
+            if (swipeDirection.y > 0 && currentIndex > 0)
+            {
+                currentIndex--;
+            }
+            else if (swipeDirection.y < 0 && currentIndex < contentParent.childCount - 1)
+            {
+                currentIndex++;
+            }
+        }
+
+        float targetPosition = -currentIndex * contentParent.layout.height;
+        var endValue = new Vector3(contentParent.transform.position.x, targetPosition, contentParent.transform.position.z);
+        Vector3 a = contentParent.transform.position;
+        contentParent.transform.position = endValue;
     }
 }
