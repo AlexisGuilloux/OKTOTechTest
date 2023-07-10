@@ -48,6 +48,7 @@ public class SwipeManager : MonoBehaviour
         {
             contentParent = ActiveVideo.UIDocument.rootVisualElement.Q("MainVideoUI");
         }
+        ActiveVideo.AudioSource.Pause();
 
         _screenshotTool.GetScreenshot(ActiveVideo);
         swipeStartPos = Input.mousePosition;

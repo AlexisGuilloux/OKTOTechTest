@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 public class VideoController : MonoBehaviour
@@ -6,6 +7,7 @@ public class VideoController : MonoBehaviour
     private SongData _songData;
     private GameObject _characterInstance;
     private bool _enabled;
+    private AudioSource _audioSource;
 
     private readonly Color _likedColor = new (0.7f, 0.08f, 0.08f, 1f);
     private readonly Color _sharedColor = new (0.1f, 0.2f, 0.7f, 1f);
@@ -49,6 +51,7 @@ public class VideoController : MonoBehaviour
 
     
     public UIDocument UIDocument => _uiDocument;
+    public AudioSource AudioSource => _audioSource;
     public bool DataInitialized { get; private set; }
 
     private void OnEnable()
@@ -88,6 +91,14 @@ public class VideoController : MonoBehaviour
 
     public void Init(SongData songData, GameObject characterInstance)
     {
+        if (_audioSource == null)
+        {
+            _audioSource = this.AddComponent<AudioSource>();
+            _audioSource.loop = true;
+        }
+
+        _audioSource.clip = songData._audioClip;
+        _audioSource.Play();
         _uiDocument.sortingOrder = 1f;
         _songData = songData;
         _characterInstance = characterInstance;
