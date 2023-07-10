@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:GroupBox name="MainVideoUI" style="position: relative; left: 0; top: 0; right: 0; bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; width: 100%; height: 90%;">
+    <ui:GroupBox name="MainVideoUI" style="position: relative; left: 0; top: 0; right: 0; bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; width: 100%; height: 100%;">
         <ui:Label text="Player One" display-tooltip-when-elided="true" name="PlayerNameText" style="color: rgb(255, 255, 255); font-size: 38px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; left: 5%; top: 5%;">
             <ui:Label text="The Double Shuffle" display-tooltip-when-elided="true" name="MoveNameText" style="color: rgb(255, 255, 255); font-size: 32px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; bottom: -150%;" />
         </ui:Label>
@@ -14,5 +14,6 @@
             <ui:Label text="U can&apos;t T." display-tooltip-when-elided="true" name="SongName" style="-unity-font: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=7d9507bcc2adac4439fdfacf5331bc23&amp;type=3#NotInter-Regular&apos;); font-size: 41px; color: rgb(255, 255, 255); -unity-text-align: upper-left; left: 5%; top: 20%; right: 0; bottom: 55%; width: 50%; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; white-space: normal; -unity-font-style: normal; position: absolute; text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);" />
             <ui:Label text="MC Hammer" display-tooltip-when-elided="true" name="ArtistName" style="-unity-font: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=7d9507bcc2adac4439fdfacf5331bc23&amp;type=3#NotInter-Regular&apos;); font-size: 25px; color: rgb(255, 255, 255); -unity-text-align: upper-left; left: 5%; top: 45%; right: 0; bottom: 0; width: 50%; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; white-space: normal; -unity-font-style: normal; position: absolute; text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);" />
         </ui:VisualElement>
+        <ui:VisualElement name="ScreenshotImage" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; right: 0; bottom: 0; flex-shrink: 1;" />
     </ui:GroupBox>
 </ui:UXML>

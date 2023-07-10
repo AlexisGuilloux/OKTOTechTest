@@ -1,26 +1,26 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class SwipeManager : MonoBehaviour
 {
     [SerializeField] private FeedManager _feedManager;
+    [SerializeField] private ScreenshotTool _screenshotTool;
     
     private Vector2 swipeStartPos;
     private VisualElement contentParent;
     private int currentIndex = 0;
+    public int CurrentIndex => currentIndex;
     
-    private VideoUIController ActiveVideo => _feedManager._videoUIPool.Find(x => x.DataInitialized);
-    
+    private VideoController ActiveVideo => _feedManager.VideoControllerPool.Find(x => x.DataInitialized);
+
     private void Start()
     {
-        contentParent = ActiveVideo.UIDocument.rootVisualElement.Q("MainVideoUI");
+        Events.OnScreenshotDone += HandleScreenshotReceived;
     }
 
     private void Update()
     {
+        
         if (Input.GetMouseButtonDown(0))
         {
             MouseDown();
@@ -37,14 +37,25 @@ public class SwipeManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        Events.OnScreenshotDone -= HandleScreenshotReceived;
+    }
+    
     void MouseDown()
     {
+        if (contentParent == null)
+        {
+            contentParent = ActiveVideo.UIDocument.rootVisualElement.Q("MainVideoUI");
+        }
+
+        _screenshotTool.GetScreenshot(ActiveVideo);
         swipeStartPos = Input.mousePosition;
     }
 
     private void MousePressed()
     {
-        if (currentIndex != _feedManager._videoUIPool.IndexOf(ActiveVideo)) return;
+        if (currentIndex != _feedManager.VideoControllerPool.IndexOf(ActiveVideo)) return;
         
         Vector2 swipeEndPos = Input.mousePosition;
         Vector2 swipeDirection = swipeStartPos - swipeEndPos;
@@ -72,5 +83,17 @@ public class SwipeManager : MonoBehaviour
         var endValue = new Vector3(contentParent.transform.position.x, targetPosition, contentParent.transform.position.z);
         Vector3 a = contentParent.transform.position;
         contentParent.transform.position = endValue;
+        
+        //Show next one here
+        ActiveVideo.ShowScreenshot(false);
+        ActiveVideo.Clear();
+        _feedManager.OnSwipe();
+    }
+
+
+    private void HandleScreenshotReceived(Texture2D texture2D)
+    {
+        ActiveVideo.ShowScreenshot(true, texture2D);
+        ActiveVideo.UIDocument.rootVisualElement.visible = true;
     }
 }

@@ -9,6 +9,7 @@ public class SongData : ScriptableObject
     public string _danceMove;
     public Sprite _albumImage;
     public AudioClip _audioClip;
-    public Animation _songAnimation;
+    public AnimationClip _songAnimation;
     public GameObject _songCharacter;
+    public Sprite _backgroundSprite;
 }

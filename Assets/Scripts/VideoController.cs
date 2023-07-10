@@ -1,13 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-public class VideoUIController : MonoBehaviour
+public class VideoController : MonoBehaviour
 {
     [SerializeField] private UIDocument _uiDocument;
-
     private SongData _songData;
+    private GameObject _characterInstance;
+    private bool _enabled;
 
     private readonly Color _likedColor = new (0.7f, 0.08f, 0.08f, 1f);
     private readonly Color _sharedColor = new (0.1f, 0.2f, 0.7f, 1f);
@@ -40,19 +38,22 @@ public class VideoUIController : MonoBehaviour
     
     //Images
     private Image _profileImage;
-    private Image _albumImage;
+    private VisualElement _albumImage;
+    private VisualElement _screenshotImage;
 
     private readonly string _profileImageRef = "";
     private readonly string _albumImageRef = "AlbumCover";
+    private readonly string _screenshotImageRef = "ScreenshotImage";
 
     #endregion
 
+    
     public UIDocument UIDocument => _uiDocument;
     public bool DataInitialized { get; private set; }
-    private bool enabled = false;
 
     private void OnEnable()
     {
+        _enabled = true;
         //UIDocument have a weird behaviour where you can't set things in Awake and Start
         //What a unfriendly tool that is
         QueryAllElements();
@@ -63,8 +64,10 @@ public class VideoUIController : MonoBehaviour
         _danceMoveText.text = _songData._danceMove;
         _artistNameText.text = _songData._artistName;
         _songNameText.text = _songData._titleName;
+
+        _albumImage.style.backgroundImage = new StyleBackground(_songData._albumImage);
+        
         DataInitialized = true;
-        enabled = true;
     }
 
     private void OnDisable()
@@ -74,7 +77,7 @@ public class VideoUIController : MonoBehaviour
         _artistNameText.text = "";
         _songNameText.text = "";
         DataInitialized = false;
-        enabled = false;
+        _enabled = false;
     }
 
     private void OnDestroy()
@@ -83,19 +86,23 @@ public class VideoUIController : MonoBehaviour
         _shareButton.clicked -= OnShareButtonPressed;
     }
 
-    public void Init(SongData songData)
+    public void Init(SongData songData, GameObject characterInstance)
     {
+        _uiDocument.sortingOrder = 1f;
         _songData = songData;
+        _characterInstance = characterInstance;
         gameObject.SetActive(true);
-        if (!enabled)
+        if (!_enabled)
         {
             OnEnable();
         }
     }
 
-    public void Flush()
+    public void Clear()
     {
+        _uiDocument.sortingOrder = 0f;
         gameObject.SetActive(false);
+        Destroy(_characterInstance);
     }
 
 
@@ -115,6 +122,15 @@ public class VideoUIController : MonoBehaviour
         _danceMoveText = rootVE.Q<Label>(name: _danceMoveRef);
         _artistNameText = rootVE.Q<Label>(name: _artistNameRef);
         _songNameText = rootVE.Q<Label>(name: _songNameRef);
+
+        _albumImage = rootVE.Q<VisualElement>(name: _albumImageRef);
+        _screenshotImage = rootVE.Q<VisualElement>(name: _screenshotImageRef);
+    }
+
+    public void ShowScreenshot(bool show, Texture2D screenshotSprite = null)
+    {
+        _screenshotImage.style.backgroundImage = new StyleBackground(screenshotSprite);
+        _screenshotImage.visible = show;
     }
     
     private void OnLikeButtonPressed()
